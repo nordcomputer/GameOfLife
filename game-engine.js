@@ -1,4 +1,4 @@
-var widthstart=80;
+var widthstart=40;
 var heightstart=40;
 
 var height=widthstart;
@@ -6,7 +6,7 @@ var width=heightstart;
 
 
 
-var maxcells=4;
+var maxcells=7;
 
 var stay=2;
 
@@ -137,7 +137,7 @@ function newgeneration(ctx,fields) {
     for (i = 0; i < height; i++) {
         newgen[h][i]=fields[h][i];
 
-        if (getcounter(fields,h,i)>=stay) {
+        if (getcounter(fields,h,i)>stay) {
           newgen[h][i] = true;
         }
 
@@ -145,7 +145,7 @@ function newgeneration(ctx,fields) {
           newgen[h][i] = false;
         }
 
-        if (getcounter(fields,h,i)<stay) {
+        if (getcounter(fields,h,i)<=stay) {
           newgen[h][i] = false;
         }
 
@@ -160,6 +160,14 @@ function newgeneration(ctx,fields) {
 
 
 $(function() {
+  var isMouseDown = false
+
+  $('body').mousedown(function() {
+      isMouseDown = true;
+  })
+  .mouseup(function() {
+      isMouseDown = false;
+  });
   $('#flaeche').append('<canvas id="canvas" height="'+height*10+'px" width="'+width*10+'px"></canvas>');
   i=0;
   var lin = new Array(1);
@@ -209,7 +217,7 @@ $(function() {
       myArray=newgeneration(ctx,myArray);
           var myTimer=setInterval(function() {
                 myArray=newgeneration(ctx,myArray);
-          }, 200);
+          }, 10);
 
           $('#pause').click(function() {
 
@@ -218,12 +226,20 @@ $(function() {
           });
     });
 
+
     $('.checking').click(function() {
-      $(this).toggleClass('true')
+
+        $(this).toggleClass('true');
+
     });
 
     $('#reset').click(function() {
       $('.true').removeClass('true');
     });
 
+    $('.checking').mouseover(function() {
+      if (isMouseDown==true) {
+        $(this).toggleClass('true');
+      }
+    });
   });
