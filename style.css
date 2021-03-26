@@ -1,0 +1,15 @@
+.liner {
+  display:block;
+  width:100;
+}
+.checker {
+  display:inline;
+}
+#checkframe {
+  position: absolute;
+  right: 0;
+  top: 0;
+}
+#canvas {
+  transform: rotate(-90deg)scaleX(-1);
+}
