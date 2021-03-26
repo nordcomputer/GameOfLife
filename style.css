@@ -6,10 +6,25 @@
   display:inline;
 }
 #checkframe {
-  position: absolute;
-  right: 0;
-  top: 0;
+  position: relative;
+
 }
 #canvas {
   transform: rotate(-90deg)scaleX(-1);
+  margin-bottom: 10%;
+}
+/* #canvas {
+    width: 100vw;
+    height: 100vh;
+} */
+.checking {
+    display: inline-block;
+    width: 10px;
+    height: 14px;
+    margin: 0 1px;
+    background: gray;
+}
+
+.checking.true {
+  background:green;
 }

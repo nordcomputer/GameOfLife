@@ -1,10 +1,15 @@
-const width=40;
-const height=20;
+var widthstart=80;
+var heightstart=40;
 
-const maxcells=4;
-const spawn=2;
-const stay=1;
-const dying=1
+var height=widthstart;
+var width=heightstart;
+
+
+
+var maxcells=4;
+
+var stay=2;
+
 
 
 function drawfields(ctx,fields) {
@@ -12,15 +17,15 @@ function drawfields(ctx,fields) {
   for (h = 0; h < width; h++) {
 
       ctx.fillStyle = "white";
-      ctx.fillRect(h*10+100, i*10+100, 9, 9);
+
       ctx.fillStyle = "green";
       if (fields[h][i]==true) {
-        ctx.fillRect(h*10+100, i*10+100, 9, 9);
-        $( "#"+h+"-"+i ).prop( "checked", true );
+
+        $( "#"+h+"-"+i ).addClass( "true" );
       }
       else {
-        ctx.strokeRect(h*10+100, i*10+100, 9, 9);
-        $( "#"+h+"-"+i ).prop( "checked", false );
+
+        $( "#"+h+"-"+i ).removeClass( "true");
       }
     }
   }
@@ -28,45 +33,93 @@ function drawfields(ctx,fields) {
 
 function getcounter(fields,h,i) {
   let count=0;
-  if (h>=1) {
+  h=parseInt(h);
+  i=parseInt(i);
+
+
+  //  x . .
+  //  . . .
+  //  . . .
+  if (h>0 && i>0) {
+    if (fields[h-1][i-1]==true) {
+      count=count+1;
+    }
+  }
+  //
+  //  . x .
+  //  . . .
+  //  . . .
+
+  if (h>0) {
     if (fields[h-1][i]==true) {
-      count=count+1
-    }
-    if (i>=1) {
-      if (fields[h-1][i-1]==true) {
-        count=count+1
-      }
+      count=count+1;
     }
   }
-  if (h<9) {
+  //  . . x
+  //  . . .
+  //  . . .
+
+  if (i < height-1 && h > 0) {
+    if (fields[h-1][i+1]==true) {
+      count=count+1;
+    }
+  }
+
+
+  //  . . .
+  //  x . .
+  //  . . .
+
+  if (h>0) {
+    if (fields[h-1][i]==true) {
+      count=count+1;
+    }
+  }
+
+
+  //  . . .
+  //  . . x
+  //  . . .
+
+  if (h<width-1) {
     if (fields[h+1][i]==true) {
-      count=count+1
-    }
-    if (i<9) {
-      if (fields[h+1][i+1]==true) {
-        count=count+1
-      }
+      count=count+1;
     }
   }
-  if (i>=1) {
-    if (fields[h][i-1]==true) {
-      count=count+1
-    }
-    if (h>=1) {
-      if (fields[h-1][i-1]==true) {
-        count=count+1
-      }
+
+  //  . . .
+  //  . . .
+  //  x . .
+
+  if (h < width-1  && i > 0) {
+    if (fields[h+1][i-1]==true) {
+      count=count+1;
     }
   }
-  if (i<9) {
-    if (fields[h][i+1]==true) {
-      count=count+1
+
+  //  . . .
+  //  . . .
+  //  . x .
+
+  if (h < width-1) {
+    if (fields[h+1][i]==true) {
+      count=count+1;
     }
-    if (h<9) {
-      if (fields[h+1][i+1]==true) {
-        count=count+1
-      }
+  }
+
+
+  //  . . .
+  //  . . .
+  //  . . x
+
+  if (i < height-1 && h < width-1) {
+    if (fields[h+1][i+1]==true) {
+      count=count+1;
     }
+  }
+
+  if (count==stay) {
+    console.log(h+":"+i+"="+count)
   }
   return count;
 
@@ -74,30 +127,32 @@ function getcounter(fields,h,i) {
 
 function newgeneration(ctx,fields) {
 
+
   var newgen = new Array(1);
   for (h = 0; h < width; h++) {
     newgen[h] = new Array(1);
   }
+
   for (h = 0; h < width; h++) {
     for (i = 0; i < height; i++) {
+        newgen[h][i]=fields[h][i];
 
-      if (getcounter(fields,h,i) == dying) {
-        newgen[h][i] = false;
-      }
-      if (getcounter(fields,h,i) == stay) {
-        newgen[h][i] = true;
-      }
-      if (getcounter(fields,h,i) == spawn) {
-        newgen[h][i] = fields[h][i];
+        if (getcounter(fields,h,i)>=stay) {
+          newgen[h][i] = true;
+        }
 
-      }
-      if (getcounter(fields,h,i) >= maxcells) {
-        newgen[h][i] = false;
-      }
+        if (getcounter(fields,h,i)>=maxcells) {
+          newgen[h][i] = false;
+        }
+
+        if (getcounter(fields,h,i)<stay) {
+          newgen[h][i] = false;
+        }
 
     }
   }
   drawfields(ctx,newgen);
+  // myArray=newgen;
   return newgen;
 
 
@@ -105,13 +160,14 @@ function newgeneration(ctx,fields) {
 
 
 $(function() {
+  $('#flaeche').append('<canvas id="canvas" height="'+height*10+'px" width="'+width*10+'px"></canvas>');
   i=0;
   var lin = new Array(1);
 
   for (h = 0; h < width; h++) {
     lin[h]="";
     for (i = 0; i < height; i++) {
-      lin[h]=lin[h]+'<div class="checker line-'+h+' column-'+i+'"><input data-line="'+h+'" data-row="'+i+'" type="checkbox" name="'+h+'-'+i+'" id="'+h+'-'+i+'"/></div>';
+      lin[h]=lin[h]+'<div class="checker line-'+h+' column-'+i+'"><div class="checking" id="'+h+'-'+i+'" data-line="'+h+'" data-row="'+i+'"></div></div>';
     }
     $('#checkframe').append('<div class="liner lin-'+h+'">'+lin[h]+'</div>');
   }
@@ -135,24 +191,22 @@ $(function() {
   var ctx = canvas.getContext("2d");
 
 
-  console.table(myArray);
+
   drawfields(ctx,myArray);
 
-  $('#canvas').click(function() {
-      var boxes = $(":checkbox:checked");
+  $('#start').click(function() {
+      var boxes = $(".true");
       boxes.each(function() {
         var startline=$(this).data("line");
         var startrow=$(this).data("row");
-        console.log(startline);
-        console.log(startrow);
         myArray[parseInt(startline)][parseInt(startrow)]=true;
       });
 
       // myArray=newgeneration(ctx,myArray);
-      console.table(myArray);
+
       var start = new Date;
 
-
+      myArray=newgeneration(ctx,myArray);
           var myTimer=setInterval(function() {
                 myArray=newgeneration(ctx,myArray);
           }, 200);
@@ -162,6 +216,14 @@ $(function() {
             clearInterval(myTimer);
 
           });
+    });
+
+    $('.checking').click(function() {
+      $(this).toggleClass('true')
+    });
+
+    $('#reset').click(function() {
+      $('.true').removeClass('true');
     });
 
   });
