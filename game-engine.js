@@ -1,15 +1,11 @@
-var widthstart=40;
-var heightstart=40;
 
+var widthstart=50;
+var heightstart=40;
 var height=widthstart;
 var width=heightstart;
-
-
-
 var maxcells=7;
-
 var stay=2;
-
+var isMouseDown = false
 
 
 function drawfields(ctx,fields) {
@@ -71,7 +67,7 @@ function getcounter(fields,h,i) {
   //  . . .
 
   if (h>0) {
-    if (fields[h-1][i]==true) {
+    if (fields[h][i-1]==true) {
       count=count+1;
     }
   }
@@ -82,7 +78,7 @@ function getcounter(fields,h,i) {
   //  . . .
 
   if (h<width-1) {
-    if (fields[h+1][i]==true) {
+    if (fields[h][i+1]==true) {
       count=count+1;
     }
   }
@@ -160,7 +156,8 @@ function newgeneration(ctx,fields) {
 
 
 $(function() {
-  var isMouseDown = false
+
+
 
   $('body').mousedown(function() {
       isMouseDown = true;
@@ -168,6 +165,7 @@ $(function() {
   .mouseup(function() {
       isMouseDown = false;
   });
+
   $('#flaeche').append('<canvas id="canvas" height="'+height*10+'px" width="'+width*10+'px"></canvas>');
   i=0;
   var lin = new Array(1);
@@ -199,7 +197,6 @@ $(function() {
   var ctx = canvas.getContext("2d");
 
 
-
   drawfields(ctx,myArray);
 
   $('#start').click(function() {
@@ -217,7 +214,7 @@ $(function() {
       myArray=newgeneration(ctx,myArray);
           var myTimer=setInterval(function() {
                 myArray=newgeneration(ctx,myArray);
-          }, 10);
+          }, 300);
 
           $('#pause').click(function() {
 
