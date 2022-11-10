@@ -1,6 +1,7 @@
 .liner {
   display:block;
   width:100;
+  margin:1px;
 }
 .checker {
   display:inline;
@@ -19,9 +20,7 @@
 } */
 .checking {
     display: inline-block;
-    width: 10px;
-    height: 14px;
-    margin: 0 1px;
+    margin: 1px;
     background: gray;
 }
 

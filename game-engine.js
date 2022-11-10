@@ -1,11 +1,13 @@
 
-var widthstart=50;
-var heightstart=40;
+var widthstart=100;
+var heightstart=60;
 var height=widthstart;
 var width=heightstart;
-var maxcells=7;
-var stay=2;
-var isMouseDown = false
+var maxcells=3;
+var newborn = 3;
+var dieifsmaller = 2;
+var isMouseDown = false;
+var fieldsize = "14px";
 
 
 function drawfields(ctx,fields) {
@@ -16,11 +18,9 @@ function drawfields(ctx,fields) {
 
       ctx.fillStyle = "green";
       if (fields[h][i]==true) {
-
         $( "#"+h+"-"+i ).addClass( "true" );
       }
       else {
-
         $( "#"+h+"-"+i ).removeClass( "true");
       }
     }
@@ -114,7 +114,7 @@ function getcounter(fields,h,i) {
     }
   }
 
-  if (count==stay) {
+  if (count==newborn) {
     console.log(h+":"+i+"="+count)
   }
   return count;
@@ -131,19 +131,21 @@ function newgeneration(ctx,fields) {
 
   for (h = 0; h < width; h++) {
     for (i = 0; i < height; i++) {
-        newgen[h][i]=fields[h][i];
+      newgen[h][i] = fields[h][i];
 
-        if (getcounter(fields,h,i)>stay) {
+        if (getcounter(fields,h,i)<dieifsmaller) {
+          newgen[h][i] = false;
+        }
+
+        if (getcounter(fields,h,i)>maxcells) {
+          newgen[h][i] = false;
+        }
+
+        if (getcounter(fields,h,i)==newborn) {
           newgen[h][i] = true;
         }
 
-        if (getcounter(fields,h,i)>=maxcells) {
-          newgen[h][i] = false;
-        }
 
-        if (getcounter(fields,h,i)<=stay) {
-          newgen[h][i] = false;
-        }
 
     }
   }
@@ -155,9 +157,7 @@ function newgeneration(ctx,fields) {
 }
 
 
-$(function() {
-
-
+$(function () {
 
   $('body').mousedown(function() {
       isMouseDown = true;
@@ -192,7 +192,9 @@ $(function() {
     }
 
   }
-
+  $('.checking').css('width', fieldsize);
+  $('.checking').css('height', fieldsize);
+  $('.liner').css('height', fieldsize);
   var canvas = document.getElementById("canvas");
   var ctx = canvas.getContext("2d");
 
@@ -200,10 +202,10 @@ $(function() {
   drawfields(ctx,myArray);
 
   $('#start').click(function() {
-      var boxes = $(".true");
+      let boxes = $(".true");
       boxes.each(function() {
-        var startline=$(this).data("line");
-        var startrow=$(this).data("row");
+        let startline=$(this).data("line");
+        let startrow=$(this).data("row");
         myArray[parseInt(startline)][parseInt(startrow)]=true;
       });
 
@@ -225,13 +227,11 @@ $(function() {
 
 
     $('.checking').click(function() {
-
         $(this).toggleClass('true');
-
     });
 
     $('#reset').click(function() {
-      $('.true').removeClass('true');
+      location.reload();
     });
 
     $('.checking').mouseover(function() {
