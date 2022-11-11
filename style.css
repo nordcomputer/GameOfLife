@@ -28,3 +28,6 @@
 .checking.true {
   background:green;
 }
+canvas {
+  display:none;
+}
