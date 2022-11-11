@@ -1,6 +1,6 @@
 
-var widthstart=100;
-var heightstart=60;
+var widthstart = 100;
+var heightstart = 30;
 var height=widthstart;
 var width=heightstart;
 var maxcells=3;
@@ -8,6 +8,11 @@ var newborn = 3;
 var dieifsmaller = 2;
 var isMouseDown = false;
 var fieldsize = "14px";
+var myArray = new Array(1);
+var ctx = "";
+var myTimer;
+var boxes = getboxes();
+var interval;
 
 
 function drawfields(ctx,fields) {
@@ -123,7 +128,7 @@ function getcounter(fields,h,i) {
 
 function newgeneration(ctx,fields) {
 
-
+  var allfields = 0;
   var newgen = new Array(1);
   for (h = 0; h < width; h++) {
     newgen[h] = new Array(1);
@@ -131,7 +136,7 @@ function newgeneration(ctx,fields) {
 
   for (h = 0; h < width; h++) {
     for (i = 0; i < height; i++) {
-      newgen[h][i] = fields[h][i];
+        newgen[h][i] = fields[h][i];
 
         if (getcounter(fields,h,i)<dieifsmaller) {
           newgen[h][i] = false;
@@ -144,27 +149,39 @@ function newgeneration(ctx,fields) {
         if (getcounter(fields,h,i)==newborn) {
           newgen[h][i] = true;
         }
-
+        if (newgen[h][i] == true) {
+          allfields = allfields + 1;
+        }
 
 
     }
   }
-  drawfields(ctx,newgen);
-  // myArray=newgen;
-  return newgen;
+
+  drawfields(ctx, newgen);
+  if (allfields == 0) {
+    $('#pause').trigger('click');
+  }
+    return newgen;
+
 
 
 }
 
+function getboxes() {
+  boxes = $(".true");
+  return boxes;
+}
 
-$(function () {
-
-  $('body').mousedown(function() {
-      isMouseDown = true;
-  })
-  .mouseup(function() {
-      isMouseDown = false;
-  });
+function createcanvas() {
+  widthstart = $('#width').val();
+  heightstart = $('#height').val();
+  fieldsize = $('#size').val() + "px";
+  height=widthstart;
+  width=heightstart;
+  myArray = new Array(1);
+  ctx = "";
+  myTimer;
+  boxes = getboxes();
 
   $('#flaeche').append('<canvas id="canvas" height="'+height*10+'px" width="'+width*10+'px"></canvas>');
   i=0;
@@ -178,7 +195,7 @@ $(function () {
     $('#checkframe').append('<div class="liner lin-'+h+'">'+lin[h]+'</div>');
   }
 
-  var myArray = new Array(1);
+  myArray = new Array(1);
   for (h = 0; h < width; h++) {
     myArray[h] = new Array(1);
   }
@@ -196,16 +213,29 @@ $(function () {
   $('.checking').css('height', fieldsize);
   $('.liner').css('height', fieldsize);
   var canvas = document.getElementById("canvas");
-  var ctx = canvas.getContext("2d");
+  ctx = canvas.getContext("2d");
 
 
   drawfields(ctx,myArray);
+}
 
-  $('#start').click(function() {
-      let boxes = $(".true");
+$(function () {
+
+  $('body').mousedown(function() {
+      isMouseDown = true;
+  })
+  .mouseup(function() {
+      isMouseDown = false;
+  });
+
+  createcanvas();
+
+  $('#start').click(function () {
+      interval = $('#interval').val();
+      boxes = getboxes();
       boxes.each(function() {
-        let startline=$(this).data("line");
-        let startrow=$(this).data("row");
+        var startline=$(this).data("line");
+        var startrow=$(this).data("row");
         myArray[parseInt(startline)][parseInt(startrow)]=true;
       });
 
@@ -214,24 +244,32 @@ $(function () {
       var start = new Date;
 
       myArray=newgeneration(ctx,myArray);
-          var myTimer=setInterval(function() {
+          myTimer=setInterval(function() {
                 myArray=newgeneration(ctx,myArray);
-          }, 300);
+          }, interval);
 
           $('#pause').click(function() {
-
             clearInterval(myTimer);
-
           });
     });
-
 
     $('.checking').click(function() {
         $(this).toggleClass('true');
     });
 
     $('#reset').click(function() {
-      location.reload();
+      $('.true').removeClass('true');
+      $('#flaeche').empty();
+      $('#checkframe').empty();
+      createcanvas();
+      $('.checking').click(function() {
+        $(this).toggleClass('true');
+      });
+      $('.checking').mouseover(function() {
+        if (isMouseDown==true) {
+          $(this).toggleClass('true');
+        }
+      });
     });
 
     $('.checking').mouseover(function() {
