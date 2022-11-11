@@ -13,6 +13,7 @@ var ctx = "";
 var myTimer;
 var boxes = getboxes();
 var interval;
+var generation = 0;
 
 
 function drawfields(ctx,fields) {
@@ -156,7 +157,9 @@ function newgeneration(ctx,fields) {
 
     }
   }
-
+  generation = generation + 1;
+  $('#sum').text("Alive: " + allfields);
+  $('#generation').text("Generation: "+generation);
   drawfields(ctx, newgen);
   if (allfields == 0) {
     $('#pause').trigger('click');
@@ -222,7 +225,8 @@ function createcanvas() {
 $(function () {
 
   $('body').mousedown(function() {
-      isMouseDown = true;
+    isMouseDown = true;
+
   })
   .mouseup(function() {
       isMouseDown = false;
@@ -254,27 +258,41 @@ $(function () {
     });
 
     $('.checking').click(function() {
-        $(this).toggleClass('true');
+      $(this).toggleClass('true');
+      var alive = $('.true').length;
+      $('#sum').text("Alive: "+alive);
+
     });
 
-    $('#reset').click(function() {
+  $('#reset').click(function () {
+      generation = 0;
+    $('#generation').text("Generation: " + generation);
+    $('#sum').text("Alive: 0");
       $('.true').removeClass('true');
       $('#flaeche').empty();
       $('#checkframe').empty();
       createcanvas();
       $('.checking').click(function() {
         $(this).toggleClass('true');
+        var alive = $('.true').length;
+        $('#sum').text("Alive: "+alive);
       });
       $('.checking').mouseover(function() {
         if (isMouseDown==true) {
           $(this).toggleClass('true');
         }
+        var alive = $('.true').length;
+        $('#sum').text("Alive: "+alive);
       });
+
     });
 
     $('.checking').mouseover(function() {
       if (isMouseDown==true) {
         $(this).toggleClass('true');
       }
+      var alive = $('.true').length;
+      $('#sum').text("Alive: "+alive);
     });
+
   });
