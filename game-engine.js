@@ -222,6 +222,8 @@ function createcanvas() {
   drawfields(ctx,myArray);
 }
 
+
+
 $(function () {
 
   $('body').mousedown(function() {
@@ -234,59 +236,60 @@ $(function () {
 
   createcanvas();
 
-  $('#start').click(function () {
-      interval = $('#interval').val();
-      boxes = getboxes();
-      boxes.each(function() {
-        var startline=$(this).data("line");
-        var startrow=$(this).data("row");
-        myArray[parseInt(startline)][parseInt(startrow)]=true;
-      });
-
-      // myArray=newgeneration(ctx,myArray);
-
-      var start = new Date;
-
-      myArray=newgeneration(ctx,myArray);
-          myTimer=setInterval(function() {
-                myArray=newgeneration(ctx,myArray);
-          }, interval);
-
-          $('#pause').click(function() {
-            clearInterval(myTimer);
-          });
+  $('#step').click(function () {
+    interval = $('#interval').val();
+    boxes = getboxes();
+    boxes.each(function() {
+      var startline=$(this).data("line");
+      var startrow=$(this).data("row");
+      myArray[parseInt(startline)][parseInt(startrow)]=true;
     });
+    var start = new Date;
 
+    myArray = newgeneration(ctx, myArray);
+  });
+
+  $('#start').click(function () {
+    interval = $('#interval').val();
+    boxes = getboxes();
+    boxes.each(function() {
+      var startline=$(this).data("line");
+      var startrow=$(this).data("row");
+      myArray[parseInt(startline)][parseInt(startrow)]=true;
+    });
+    var start = new Date;
+
+    myArray = newgeneration(ctx, myArray);
+
+    myTimer=setInterval(function() {
+          myArray=newgeneration(ctx,myArray);
+    }, interval);
+
+    $('#pause').click(function() {
+      clearInterval(myTimer);
+    });
+  });
+
+  $('.checking').click(function() {
+    $(this).toggleClass('true');
+    var alive = $('.true').length;
+    $('#sum').text("Alive: "+alive);
+
+  });
+
+  $('#reset').click(function () {
+    generation = 0;
+    $('#generation').text("Generation: " + generation);
+    $('#sum').text("Alive: 0");
+    $('.true').removeClass('true');
+    $('#flaeche').empty();
+    $('#checkframe').empty();
+    createcanvas();
     $('.checking').click(function() {
       $(this).toggleClass('true');
       var alive = $('.true').length;
       $('#sum').text("Alive: "+alive);
-
     });
-
-  $('#reset').click(function () {
-      generation = 0;
-    $('#generation').text("Generation: " + generation);
-    $('#sum').text("Alive: 0");
-      $('.true').removeClass('true');
-      $('#flaeche').empty();
-      $('#checkframe').empty();
-      createcanvas();
-      $('.checking').click(function() {
-        $(this).toggleClass('true');
-        var alive = $('.true').length;
-        $('#sum').text("Alive: "+alive);
-      });
-      $('.checking').mouseover(function() {
-        if (isMouseDown==true) {
-          $(this).toggleClass('true');
-        }
-        var alive = $('.true').length;
-        $('#sum').text("Alive: "+alive);
-      });
-
-    });
-
     $('.checking').mouseover(function() {
       if (isMouseDown==true) {
         $(this).toggleClass('true');
@@ -296,3 +299,13 @@ $(function () {
     });
 
   });
+
+  $('.checking').mouseover(function() {
+    if (isMouseDown==true) {
+      $(this).toggleClass('true');
+    }
+    var alive = $('.true').length;
+    $('#sum').text("Alive: "+alive);
+  });
+
+});
